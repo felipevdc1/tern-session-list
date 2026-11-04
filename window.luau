@@ -1,12 +1,15 @@
 -- Window half of the Tern session-list plugin (one per Tern window).
--- Opens the list block beside a pane once per list: the host sets kv
--- `abrir:<pane>` when a pane gets its first item (or a new list); the window
--- that holds that pane opens the block and clears the key. A block the person
--- closes stays closed until "show for this tab" or a new list in that pane.
+-- Opens the list block beside a pane: the host sets kv `abrir:<pane>` when a
+-- pane gets its first item (or a new list) and whenever it serves that pane's
+-- `start` (every session start: startup, resume, /clear); the window that holds
+-- that pane opens the block and clears the key. A tab that already holds a
+-- list block is skipped (one list per tab). A block the person closes stays
+-- closed until "show for this tab" or the pane's next session start / new list.
 -- Never writes lists or answers (the host is the only writer).
 
 local textos = require("./lib/textos")
 local lembrete = require("./lib/lembrete")
+local painel = require("./lib/painel")
 
 local KIND = tern.plugin.id .. ".list"
 local LOOP_MS = 1000
@@ -42,12 +45,19 @@ end
 -- Only this window's panes are read, so two windows never touch the same key.
 local function abreOsPendentes(cx)
 	local sozinho = kv("abrir_sozinho") ~= false
+	local panes = {}
 	for _, info in cx.session:panes() do
+		table.insert(panes, info)
+	end
+	for _, info in panes do
 		local chave = chaveAbrir(info.pane)
 		if kv(chave) ~= nil then
-			if sozinho then
+			if sozinho and not painel.temBloco(panes, info.tab, KIND) then
 				local ok, erro = pcall(abreBloco, cx, info.pane)
-				if not ok then
+				if ok then
+					-- two panes of one tab in the same sweep open one block
+					table.insert(panes, { pane = -1, tab = info.tab, block = KIND })
+				else
 					tern.log.warn("session-list: could not open the block", info.pane, erro)
 				end
 			end

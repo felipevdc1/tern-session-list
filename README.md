@@ -41,8 +41,9 @@ The SessionStart hook already teaches the rule; the paragraph in `AGENTS.md` is 
 
 ## The panel
 
-When a tab's list gets its first item, a panel opens to the right of that tab, once per list.
-If you close it, it stays closed until you run "Session list: show for this tab" from the palette or a new list starts in that tab.
+A panel opens to the right of a tab when its list gets its first item, and whenever an agent session starts there (startup, resume, `/clear`), even before anything is added, so an offered list is visible at once.
+A tab never gets a second panel.
+If you close it, it stays closed until you run "Session list: show for this tab" from the palette, a new list starts in that tab or the next agent session starts there.
 It is drawn with Tern's own todo card, so it follows your Tern theme.
 
 Keys, with the panel focused:

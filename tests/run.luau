@@ -9,6 +9,7 @@ local arquivos = {
 	{ "vista_test", require("./vista_test") },
 	{ "lembrete_test", require("./lembrete_test") },
 	{ "brilho_test", require("./brilho_test") },
+	{ "painel_test", require("./painel_test") },
 }
 
 local passou, falhou = 0, 0

@@ -229,6 +229,11 @@ local function atende(base: string): boolean
 				end
 				renderiza(pane)
 			end
+			-- a session start opens the panel beside its pane, list or not (the
+			-- window skips a tab that already has one and honours abrir_sozinho)
+			if res.status == "ok" and pedido.verb == "start" then
+				pcall(tern.kv.set, chaveAbrir(pane), "start")
+			end
 			-- adopt/discard also change the orphan offer every other block shows
 			if res.status == "ok" and (pedido.verb == "adopt" or pedido.verb == "discard") then
 				renderizaTodos()
